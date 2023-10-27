@@ -1,0 +1,32 @@
+{
+    "config": {
+        "error": {
+            "connection": "Unable to connect. Check if the provided endpoint is correct.",
+            "auth": "The providedAPI key is not valid."
+        },
+        "step": {
+            "user": {
+                "title": "Endpoint",
+                "description": "Enter the endpoint URL for your remote",
+                "data": {
+                    "endpoint": "API endpoint URL",
+                    "apikey": "API key"
+                }
+            },
+            "auth": {
+                "title": "Authenticate",
+                "description": "Enter the PIN code shown on your remote",
+                "data": {
+                    "pin": "PIN code"
+                }
+            },
+            "finish": {
+                "title": "Device name",
+                "description": "Choose a name for the device",
+                "data": {
+                    "name": "Device name"
+                }
+            }
+        }
+    }
+}

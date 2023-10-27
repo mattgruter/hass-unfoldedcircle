@@ -1,0 +1,22 @@
+{
+  "domain": "unfoldedcircle",
+  "name": "Unfolded Circle",
+  "version": "0.0.1",
+  "codeowners": [
+    "@mattgruter"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "network"
+  ],
+  "documentation": "https://www.home-assistant.io/integrations/unfoldedcircle",
+  "homekit": {},
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "requirements": [
+    "python-unfoldedcircle==0.0.2"
+  ],
+  "zeroconf": [
+    "_uc-remote._tcp.local."
+  ]
+}

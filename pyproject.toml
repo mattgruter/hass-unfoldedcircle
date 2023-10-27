@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "hass-unfoldedcircle"
+version = "0.0.1"
+description = "Home Assistant component to integrate with Unfolde Circle Remote Two"
+authors = ["Matthias Grüter <matthias@grueter.name>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+homeassistant = "^2023.10.5"
+voluptuous = "^0.13.1"
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.16.1"
+pytest = "^7.4.2"
+autopep8 = "^2.0.4"
+black = "^23.9.1"
+pylint = "^3.0.1"
+flake8 = "^6.1.0"
+ipykernel = "^6.25.2"
+pytest-homeassistant-custom-component = "^0.13.69"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
