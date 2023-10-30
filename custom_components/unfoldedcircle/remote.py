@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 
-from homeassistant.components.remote import RemoteEntity, RemoteEntityFeature
+from homeassistant.components.remote import RemoteEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -12,7 +12,6 @@ import unfoldedcircle.device as uc
 
 from .const import DOMAIN
 from .device import UnfoldedCircleDevice
-
 
 _LOGGER = logging.getLogger(__name__)
 

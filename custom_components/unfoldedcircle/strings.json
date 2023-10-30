@@ -2,7 +2,8 @@
     "config": {
         "error": {
             "connection": "Unable to connect. Check if the endpoint URL is correct.",
-            "auth": "Unable to authenticate. Check if the pin code is correct."
+            "auth": "Unable to authenticate. Check if the pin code is correct.",
+            "timeout": "Timed out while connecting to remote."
         },
         "abort": {
             "already_configured": "Device is already configured"

@@ -37,6 +37,8 @@ class UnfoldedCircleConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if not device_info:
             raise uc.HTTPError("can't fetch device info")
 
+        self.context["title_placeholders"] = {"name": self.api.name}
+
     async def async_login(self):
         apikey = await self.hass.async_add_executor_job(
             self.api.add_apikey,
@@ -94,10 +96,27 @@ class UnfoldedCircleConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             self.api.pin = pin
             try:
                 apikey = await self.async_login()
-            except uc.HTTPError:
+            except uc.HTTPError as e:
+                _LOGGER.warn(
+                    "Error while creating API key on %s: %s",
+                    self.api.endpoint,
+                    e.message,
+                )
                 errors["base"] = "connection"
-            except uc.AuthenticationError:
+            except uc.AuthenticationError as e:
+                _LOGGER.warn(
+                    "Authentication error on %s: %s",
+                    self.api.endpoint,
+                    e.message,
+                )
                 errors["base"] = "auth"
+            except TimeoutError as e:
+                _LOGGER.warn(
+                    "Timed out while creating API key on %s: %s",
+                    self.api.endpoint,
+                    e.message,
+                )
+                errors["base"] = "timeout"
             else:
                 self.api.apikey = apikey
                 return await self.async_step_finish()
@@ -119,7 +138,7 @@ class UnfoldedCircleConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 data={
                     CONF_URL: self.api.endpoint,
                     CONF_API_KEY: self.api.apikey,
-                    CONF_TYPE: DEVICE_MODEL[0],  # @fixme
+                    CONF_TYPE: DEVICE_MODEL,  # @fixme: check that model is supported
                 },
             )
 
@@ -131,13 +150,3 @@ class UnfoldedCircleConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=name_schema,
             errors=errors,
         )
-
-
-# async def try_connection(client_url, client_apikey):
-#     _LOGGER.debug("Trying to connect to Unfolded Circle device during setup")
-#     uc_device = uc.Device(endpoint=client_url, apikey=client_apikey)
-#     await uc_device.info()
-#     await uc_device.fetch_remotes()
-#     _LOGGER.debug(
-#         "Successfully connected to Unfolded Circle device during setup"
-#     )
