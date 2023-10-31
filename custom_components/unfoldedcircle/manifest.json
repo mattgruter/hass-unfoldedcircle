@@ -1,7 +1,6 @@
 {
   "domain": "unfoldedcircle",
   "name": "Unfolded Circle",
-  "version": "0.0.1",
   "codeowners": [
     "@mattgruter"
   ],
@@ -16,6 +15,7 @@
   "requirements": [
     "python-unfoldedcircle==0.0.2"
   ],
+  "version": "0.0.1",
   "zeroconf": [
     "_uc-remote._tcp.local."
   ]

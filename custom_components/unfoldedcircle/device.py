@@ -29,7 +29,7 @@ class UnfoldedCircleDevice:
 
     @property
     def serial(self):
-        # @fixme
+        # @fixme: return serial number instead
         return self.config.unique_id
 
     @property
@@ -38,7 +38,7 @@ class UnfoldedCircleDevice:
 
     @property
     def model_type(self):
-        # @fixme
+        # @fixme: get device model from API
         return DEVICE_MODEL
 
     @staticmethod
