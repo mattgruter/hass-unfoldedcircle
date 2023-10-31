@@ -10,7 +10,7 @@ Use this component to send IR commands with the Remote Two.
 1. Restart Home Assistant.
 1. Your remote will be auto-discovered. Go to `Settings` > `Devices & services` to configure it. It will ask for the PIN shown on your remote during setup.
 
-   Note: If you're device wasn't discovered you can manually enter the endpoint URL of your remote, e.g. `http://192.168.1.17/api/`
+   Note: If your device wasn't discovered you can manually enter the endpoint URL of your remote, e.g. `http://192.168.1.17/api/`
 
 ## Usage
 
