@@ -14,7 +14,9 @@ Use this component to send IR commands with the Remote Two.
 
 ## Usage
 
-Once configured, the integration creates a device and a `remote` entry that can be used with the `remote.send_command` service.
+Once configured, the integration creates a device and a `remote` entry that can be used with the `remote/send_command` service.
+
+Services `remote/turn_on`, `remote/turn_off` and `remote/toggle` are not implemented.
 
 ## Development
 
@@ -24,7 +26,11 @@ The component uses the [python-unfoldedcircle](https://github.com/mattgruter/pyt
 
 - **RF & Bluetooth commands**
 
-  The Remote Two's roadmap includes sending RF and Bluetooth commands. Once this feature has been rolled out and is available through its API, this component's `remote.send_command` could include sending commands over IR, RF and Bluetooth.
+  The Remote Two's roadmap includes sending RF and Bluetooth commands. Once this feature has been rolled out and is available through its API, this component's `remote/send_command` could include sending commands over IR, RF and Bluetooth.
+
+- **Docks as seperate devices**
+
+  Set up seperate remote devices and entities for each remote dock.
 
 - **Activities**
 
