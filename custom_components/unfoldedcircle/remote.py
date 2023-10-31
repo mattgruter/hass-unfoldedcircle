@@ -65,23 +65,37 @@ class UCRemoteTwoRemote(RemoteEntity):
             )
         self._attr_activity_list = [a["name"]["en"] for a in activities]
 
-    async def async_turn_on(self, activity: str = None, **kwargs):
-        """Send the power on command."""
-        _LOGGER.error("Remote turned on activity %s", activity)
-        self._attr_current_activity = activity
-
-    async def async_toggle(self, activity: str = None, **kwargs):
-        """Toggle a device."""
-        _LOGGER.error("Remote toggled activity %s", activity)
-
-    async def async_turn_off(self, activity: str = None, **kwargs):
-        """Send the power off command."""
-        _LOGGER.error("Remote turned off activity %s", activity)
-        self._attr_current_activity = None
-
-    async def async_send_command(self, command, **kwargs):
+    async def async_send_command(self, command, **kwargs) -> None:
         """Send commands to a device."""
-        _LOGGER.error("Remote sent command %s", command)
+
+        remote_group = uc.DeviceGroup([self.api])
+        target = kwargs.get("device")
+        if not target:
+            raise NotImplementedError("No target device submitted %s", kwargs)
+
+        for cmd in command:
+            try:
+                await self.hass.async_add_executor_job(
+                    remote_group.send_ircmd, target, cmd
+                )
+            except uc.HTTPError:
+                _LOGGER.exception(
+                    "Error sending IR command %s to UnfoldedCircle device %s",
+                    cmd,
+                    self.device.name,
+                )
+            except uc.CodeSetNotFound:
+                _LOGGER.error(
+                    "Target %s not found on %s", target, self.device.name
+                )
+            except uc.NoDefaultEmitter:
+                _LOGGER.error(
+                    "Unable to determine IR emitter on %s", self.device.name
+                )
+            except uc.EmitterNotFound:
+                _LOGGER.error(
+                    "Unable to determine IR emitter on %s", self.device.name
+                )
 
     @property
     def device_info(self) -> DeviceInfo:
