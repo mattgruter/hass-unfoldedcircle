@@ -63,7 +63,9 @@ class UCRemoteTwoRemote(RemoteEntity):
             _LOGGER.exception(
                 "Error retrieving data from UnfoldedCircle device %s", self.name
             )
-        self._attr_activity_list = [a["name"]["en"] for a in activities]
+            self._available = False
+        else:
+            self._attr_activity_list = [a["name"]["en"] for a in activities]
 
     async def async_send_command(self, command, **kwargs) -> None:
         """Send commands to a device."""
