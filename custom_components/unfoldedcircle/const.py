@@ -7,7 +7,9 @@ DOMAIN = "unfoldedcircle"
 DEVICE_MANUFACTURER = "Unfolded Circle"
 DEVICE_MODEL = "ucr2"
 
-AUTH_APIKEY_NAME = "hass-unfoldedcircle"
+CONF_API_KEY_NAME = "api_key_name"
+
+AUTH_APIKEY_NAME_PREFIX = "hass-unfoldedcircle"
 AUTH_APIKEY_SCOPES = ["admin"]
 
 PLATFORMS = [

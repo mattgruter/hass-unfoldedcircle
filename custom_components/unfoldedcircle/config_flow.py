@@ -1,6 +1,7 @@
 """Config flow for Unfolded Circle integration."""
 import logging
 from typing import Dict
+import uuid
 
 from homeassistant import config_entries
 from homeassistant.components.zeroconf import ZeroconfServiceInfo
@@ -14,7 +15,13 @@ from homeassistant.const import (
 import unfoldedcircle.device as uc
 import voluptuous as vol
 
-from .const import AUTH_APIKEY_NAME, AUTH_APIKEY_SCOPES, DEVICE_MODEL, DOMAIN
+from .const import (
+    AUTH_APIKEY_NAME_PREFIX,
+    AUTH_APIKEY_SCOPES,
+    CONF_API_KEY_NAME,
+    DEVICE_MODEL,
+    DOMAIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,6 +34,7 @@ class UnfoldedCircleConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     def __init__(self):
         self.api: uc.Device = None
+        self.api_keyname: str = None
 
     async def async_setup_api(self, endpoint, unique_id):
         await self.async_set_unique_id(unique_id, raise_on_progress=True)
@@ -40,15 +48,31 @@ class UnfoldedCircleConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self.context["title_placeholders"] = {"name": self.api.name}
 
     async def async_login(self):
-        apikey = await self.hass.async_add_executor_job(
+        existing_keys = await self.hass.async_add_executor_job(
+            self.api.fetch_apikeys
+        )
+        for k in existing_keys:
+            if k.get("name").startswith(AUTH_APIKEY_NAME_PREFIX):
+                _LOGGER.warn(
+                    (
+                        "Existing hass-unfoldedcircle API key found on device "
+                        "({}). Has the device been added to a different instance "
+                        "of this component?",
+                    ),
+                    k["name"],
+                )
+
+        keyid = str(uuid.uuid4())[:8]
+        keyname = f"{AUTH_APIKEY_NAME_PREFIX}-{keyid}"
+        key = await self.hass.async_add_executor_job(
             self.api.add_apikey,
-            AUTH_APIKEY_NAME,
+            keyname,
             AUTH_APIKEY_SCOPES,
         )
 
-        if not apikey:
-            raise uc.HTTPError("can't create API key")
-        return apikey
+        if not key:
+            raise uc.HTTPError("Unable to login: failed to create API key")
+        return keyname, key
 
     async def async_step_zeroconf(self, discovery_info: ZeroconfServiceInfo):
         """Handle zeroconf discovery."""
@@ -95,7 +119,7 @@ class UnfoldedCircleConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             pin = user_input[CONF_PIN]
             self.api.pin = pin
             try:
-                apikey = await self.async_login()
+                api_keyname, apikey = await self.async_login()
             except uc.HTTPError as e:
                 _LOGGER.warn(
                     "Error while creating API key on %s: %s",
@@ -119,6 +143,7 @@ class UnfoldedCircleConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "timeout"
             else:
                 self.api.apikey = apikey
+                self.api_keyname = api_keyname
                 return await self.async_step_finish()
 
         auth_schema = vol.Schema({vol.Required(CONF_PIN): str})
@@ -138,6 +163,7 @@ class UnfoldedCircleConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 data={
                     CONF_URL: self.api.endpoint,
                     CONF_API_KEY: self.api.apikey,
+                    CONF_API_KEY_NAME: self.api_keyname,
                     CONF_TYPE: DEVICE_MODEL,  # @fixme: check that model is supported
                 },
             )
